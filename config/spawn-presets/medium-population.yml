@@ -1,0 +1,40 @@
+# Medium Population Preset - Standard World (100 NPCs)
+preset_key: medium
+name: Medium Population (Standard World)
+description: Balanced gameplay with 100 AI-NPCs providing good challenge
+
+total_npcs: 100
+
+spawn_timing:
+  instant: 50
+  progressive:
+    day_1: 20
+    day_3: 20
+    day_7: 10
+
+tribe_distribution:
+  romans: 33
+  gauls: 33
+  teutons: 34
+
+difficulty_distribution:
+  easy: 30
+  medium: 50
+  hard: 15
+  expert: 5
+
+personality_distribution:
+  aggressive: 20
+  economic: 30
+  balanced: 30
+  diplomat: 10
+  assassin: 10
+
+spawn_zones:
+  center_exclusion_radius: 50
+  max_spawn_radius: 300
+  quadrant_balance: true
+
+placement:
+  algorithm: quadrant_balanced
+  clustering: false

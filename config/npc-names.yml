@@ -1,0 +1,133 @@
+# NPC Naming Templates - Realistic names by tribe
+version: 1.0
+
+# Roman Names
+romans:
+  male_first_names:
+    - Marcus
+    - Gaius
+    - Julius
+    - Lucius
+    - Titus
+    - Quintus
+    - Decimus
+    - Maximus
+    - Flavius
+    - Augustus
+    - Aurelius
+    - Brutus
+    - Cassius
+    - Claudius
+    - Cornelius
+    - Drusus
+    - Fabius
+    - Gracchus
+    - Hadrian
+    - Octavian
+    - Septimius
+    - Tiberius
+    - Trajan
+    - Vespasian
+    - Antonius
+  
+  family_names:
+    - Aurelius
+    - Maximus
+    - Flavius
+    - Cornelius
+    - Valerius
+    - Cassius
+    - Brutus
+    - Caesar
+    - Scipio
+    - Cato
+    - Cicero
+    - Pompey
+    - Sulla
+    - Marius
+    - Crassus
+  
+  format: "{first} {family}"  # e.g., "Marcus Aurelius"
+
+# Gaul Names
+gauls:
+  male_first_names:
+    - Vercingetorix
+    - Brennus
+    - Ambiorix
+    - Commius
+    - Dumnorix
+    - Diviciacus
+    - Indutiomarus
+    - Cavarinus
+    - Teutomatus
+    - Correus
+    - Viridovix
+    - Camulogenus
+    - Eporedorix
+    - Vercassivellaunus
+    - Lucterius
+    - Adiatuanos
+    - Boduognatus
+    - Sedulius
+    - Acco
+    - Tasgetius
+  
+  suffixes:
+    - the_Brave
+    - the_Wise
+    - Ironhand
+    - Stormrider
+    - Oakshield
+    - Swiftblade
+    - Wolfheart
+    - Eagleeye
+    - Stonefist
+    - Firebrand
+  
+  format: "{first}_{suffix}"  # e.g., "Brennus_the_Brave"
+
+# Teuton Names
+teutons:
+  male_first_names:
+    - Arminius
+    - Hermann
+    - Siegfried
+    - Gunther
+    - Hagen
+    - Theodoric
+    - Alaric
+    - Genseric
+    - Attila
+    - Radagaisus
+    - Odoaker
+    - Totila
+    - Witigis
+    - Teia
+    - Valamir
+    - Vidimir
+    - Theodemir
+    - Wulfric
+    - Beowulf
+    - Hrothgar
+  
+  titles:
+    - Son_of_Thunder
+    - The_Destroyer
+    - Ironborn
+    - Battleaxe
+    - Warlord
+    - Ravager
+    - Stormbreaker
+    - Skullcrusher
+    - Berserker
+    - Dragonslayer
+  
+  format: "{first}_{title}"  # e.g., "Arminius_Warlord"
+
+# Naming Rules
+naming_rules:
+  allow_duplicates: false       # Ensure unique names per world
+  fallback_format: "AI_{tribe}_{number}"  # e.g., "AI_Roman_042"
+  max_name_length: 30
+  alphanumeric_only: false      # Allow underscores

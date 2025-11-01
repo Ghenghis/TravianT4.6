@@ -1,0 +1,45 @@
+# Low Population Preset - Small World (25 NPCs)
+preset_key: low
+name: Low Population (Small World)
+description: Ideal for testing or small-scale gameplay with 25 AI-NPCs
+
+total_npcs: 25
+
+# Spawn Timing
+spawn_timing:
+  instant: 15          # 15 NPCs spawn immediately at world creation
+  progressive:
+    day_1: 5           # 5 more on day 1
+    day_3: 5           # 5 more on day 3
+
+# Tribe Distribution
+tribe_distribution:
+  romans: 33          # 8 NPCs
+  gauls: 33           # 8 NPCs
+  teutons: 34         # 9 NPCs
+
+# Difficulty Distribution
+difficulty_distribution:
+  easy: 40            # 10 NPCs
+  medium: 40          # 10 NPCs
+  hard: 15            # 4 NPCs
+  expert: 5           # 1 NPC
+
+# Personality Distribution
+personality_distribution:
+  aggressive: 20      # 5 NPCs
+  economic: 35        # 9 NPCs
+  balanced: 30        # 7 NPCs
+  diplomat: 10        # 3 NPCs
+  assassin: 5         # 1 NPC
+
+# Spawn Zone Settings
+spawn_zones:
+  center_exclusion_radius: 50   # No spawns within 50 tiles of 0,0
+  max_spawn_radius: 200         # Limited to 200 tiles from center
+  quadrant_balance: true        # Equal distribution across 4 quadrants
+
+# Placement Algorithm
+placement:
+  algorithm: quadrant_balanced
+  clustering: false

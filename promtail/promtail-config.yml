@@ -1,0 +1,46 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # Application logs (JSON formatted)
+  - job_name: travian_app
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: travian_app
+          __path__: /var/log/travian/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+            message: message
+            request_id: context.request_id
+      - labels:
+          level:
+          request_id:
+  
+  # Nginx access logs
+  - job_name: nginx_access
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx_access
+          __path__: /var/log/nginx/access.log
+  
+  # Nginx error logs
+  - job_name: nginx_error
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx_error
+          __path__: /var/log/nginx/error.log

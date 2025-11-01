@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: 'TravianDashboards'
+    orgId: 1
+    folder: 'Travian T4.6'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: true

@@ -1,0 +1,83 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'travian-t4.6'
+    environment: 'production'
+
+rule_files:
+  - 'alerts.yml'
+
+scrape_configs:
+  # ==========================================
+  # Prometheus Self-Monitoring
+  # ==========================================
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # ==========================================
+  # Node Exporter (Host Metrics)
+  # ==========================================
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # ==========================================
+  # PostgreSQL (Global DB + AI-NPC)
+  # ==========================================
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  # ==========================================
+  # MySQL (Game Worlds)
+  # ==========================================
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['mysql-exporter:9104']
+
+  # ==========================================
+  # Redis (Caching & Sessions)
+  # ==========================================
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  # ==========================================
+  # Ollama LLM Backend
+  # ==========================================
+  - job_name: 'ollama'
+    static_configs:
+      - targets: ['ollama:11434']
+    metrics_path: '/metrics'
+
+  # ==========================================
+  # vLLM Backend
+  # ==========================================
+  - job_name: 'vllm'
+    static_configs:
+      - targets: ['vllm:8000']
+    metrics_path: '/metrics'
+
+  # ==========================================
+  # PHP-FPM (Application Server)
+  # ==========================================
+  - job_name: 'php-fpm'
+    static_configs:
+      - targets: ['php-fpm-exporter:9253']
+
+  # ==========================================
+  # Nginx (Web Server)
+  # ==========================================
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+
+  # ==========================================
+  # Workers (Custom Metrics via Redis)
+  # ==========================================
+  - job_name: 'workers'
+    static_configs:
+      - targets: ['nginx:80']
+    metrics_path: '/metrics/workers'

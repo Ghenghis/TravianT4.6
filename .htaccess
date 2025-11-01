@@ -1,0 +1,278 @@
+# ============================================================================
+# TRAVIANT4.6 - ROOT .HTACCESS CONFIGURATION
+# ============================================================================
+# Version: 2.0
+# Purpose: Apache routing, security headers, performance optimization
+# Requirements: Apache 2.4+, mod_rewrite, mod_headers, mod_deflate, mod_expires
+# ============================================================================
+
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # ========================================================================
+    # API ROUTING - /v1/* endpoints
+    # ========================================================================
+    # Route all /v1/* requests to sections/api/index.php
+    # Examples:
+    #   POST /v1/servers/loadServers → sections/api/index.php
+    #   POST /v1/auth/login → sections/api/index.php
+    #   POST /v1/village/getVillageList → sections/api/index.php
+    
+    RewriteCond %{REQUEST_URI} ^/v1/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^v1/(.*)$ sections/api/index.php [QSA,L]
+    
+    # ========================================================================
+    # LEGACY API ROUTING - /api/* endpoints (backward compatibility)
+    # ========================================================================
+    # Route legacy /api/* requests to sections/api/index.php
+    
+    RewriteCond %{REQUEST_URI} ^/api/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^api/(.*)$ sections/api/index.php [QSA,L]
+    
+    # ========================================================================
+    # PHP ROUTING - Use router.php for legacy PHP pages
+    # ========================================================================
+    # Route .php requests through router.php for centralized handling
+    
+    RewriteCond %{REQUEST_URI} \.php$
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)\.php$ router.php?route=$1 [QSA,L]
+    
+    # ========================================================================
+    # ANGULAR SPA ROUTING
+    # ========================================================================
+    # All non-file, non-directory requests go to Angular's index.html
+    # This enables Angular's client-side routing for /login, /register, /game, etc.
+    
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/v1/
+    RewriteCond %{REQUEST_URI} !^/api/
+    RewriteCond %{REQUEST_URI} !^/sections/
+    RewriteRule ^(.*)$ angularIndex/browser/index.html [QSA,L]
+</IfModule>
+
+# ============================================================================
+# SECURITY HEADERS
+# ============================================================================
+
+<IfModule mod_headers.c>
+    # Prevent clickjacking
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # Enable XSS protection
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Prevent MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Referrer policy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Content Security Policy (adjust as needed for your app)
+    # Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+    
+    # Remove X-Powered-By header (hide PHP version)
+    Header unset X-Powered-By
+    
+    # CORS headers (if API is accessed from different origin)
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+</IfModule>
+
+# ============================================================================
+# DIRECTORY SECURITY
+# ============================================================================
+
+# Disable directory browsing
+Options -Indexes
+
+# Disable MultiViews (can interfere with routing)
+Options -MultiViews
+
+# Follow symbolic links (required for some configurations)
+Options +FollowSymLinks
+
+# Protect sensitive files
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sql|conf|json)$">
+    Require all denied
+</FilesMatch>
+
+# Protect .git directory
+<IfModule mod_alias.c>
+    RedirectMatch 404 /\.git
+</IfModule>
+
+# Protect config directories
+<DirectoryMatch "^/.*/config/">
+    Require all denied
+</DirectoryMatch>
+
+# ============================================================================
+# COMPRESSION (GZIP)
+# ============================================================================
+
+<IfModule mod_deflate.c>
+    # Compress HTML, CSS, JavaScript, JSON, XML
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/atom_xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+    
+    # Compression level (1-9, 6 is good balance)
+    DeflateCompressionLevel 6
+    
+    # Don't compress images (already compressed)
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|ico)$ no-gzip
+</IfModule>
+
+# ============================================================================
+# BROWSER CACHING
+# ============================================================================
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Default expiration: 30 minutes
+    ExpiresDefault "access plus 30 minutes"
+    
+    # HTML documents: 30 minutes
+    ExpiresByType text/html "access plus 30 minutes"
+    
+    # CSS: 1 month
+    ExpiresByType text/css "access plus 1 month"
+    
+    # JavaScript: 1 month
+    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/x-javascript "access plus 1 month"
+    
+    # Images: 1 month
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    
+    # Fonts: 1 year (they rarely change)
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    
+    # JSON/XML: No cache
+    ExpiresByType application/json "access plus 0 seconds"
+    ExpiresByType application/xml "access plus 0 seconds"
+    ExpiresByType text/xml "access plus 0 seconds"
+</IfModule>
+
+# Cache-Control headers
+<IfModule mod_headers.c>
+    # API responses should not be cached
+    <FilesMatch "\.(php)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+    </FilesMatch>
+    
+    # Static assets can be cached
+    <FilesMatch "\.(css|js|jpg|jpeg|png|gif|svg|woff|woff2|ttf|otf|eot|ico)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+</IfModule>
+
+# ============================================================================
+# PHP SETTINGS (if not set in php.ini)
+# ============================================================================
+
+<IfModule mod_php.c>
+    # Error handling
+    php_flag display_errors Off
+    php_flag log_errors On
+    
+    # File uploads
+    php_value upload_max_filesize 128M
+    php_value post_max_size 128M
+    
+    # Execution limits
+    php_value max_execution_time 300
+    php_value max_input_time 300
+    php_value memory_limit 512M
+    
+    # Session settings
+    php_value session.gc_maxlifetime 3600
+    php_value session.cookie_httponly 1
+</IfModule>
+
+# ============================================================================
+# MIME TYPES
+# ============================================================================
+
+<IfModule mod_mime.c>
+    # JavaScript
+    AddType application/javascript js
+    AddType application/x-javascript js
+    
+    # JSON
+    AddType application/json json
+    
+    # Web fonts
+    AddType font/ttf ttf
+    AddType font/otf otf
+    AddType font/woff woff
+    AddType font/woff2 woff2
+    AddType application/font-woff woff
+    
+    # SVG
+    AddType image/svg+xml svg svgz
+    
+    # Media
+    AddType video/mp4 mp4
+    AddType video/webm webm
+    AddType audio/mpeg mp3
+    AddType audio/ogg ogg
+</IfModule>
+
+# ============================================================================
+# ERROR PAGES (optional - customize as needed)
+# ============================================================================
+
+# ErrorDocument 400 /errors/400.html
+# ErrorDocument 401 /errors/401.html
+# ErrorDocument 403 /errors/403.html
+# ErrorDocument 404 /errors/404.html
+# ErrorDocument 500 /errors/500.html
+
+# ============================================================================
+# PERFORMANCE OPTIMIZATIONS
+# ============================================================================
+
+# Enable Keep-Alive (handled in httpd.conf, but can be set here)
+# <IfModule mod_headers.c>
+#     Header set Connection keep-alive
+# </IfModule>
+
+# Disable ETags (optional - if using versioned filenames)
+# FileETag None
+
+# ============================================================================
+# END OF CONFIGURATION
+# ============================================================================

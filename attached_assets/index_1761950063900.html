@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List4Me - Task Manager</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>List4Me</h1>
+            <div class="tabs">
+                <button class="tab active">All Tasks</button>
+                <button class="tab">Active</button>
+                <button class="tab">Completed</button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="task-input-container">
+                <input type="text" id="taskInput" placeholder="Add a new task...">
+                <button id="addTask">Add Task</button>
+            </div>
+            
+            <div class="tasks-container">
+                <!-- Tasks will be dynamically added here -->
+            </div>
+        </main>
+    </div>
+    <script src="static/js/app.js"></script>
+</body>
+</html>

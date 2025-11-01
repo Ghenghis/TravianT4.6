@@ -1,0 +1,193 @@
+# ==========================================
+# PRODUCTION OVERRIDES
+# ==========================================
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# ==========================================
+
+version: '3.8'
+
+services:
+  # ==========================================
+  # NGINX (Web Server)
+  # ==========================================
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile.prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # No application code volumes - code is in image
+      - nginx_logs:/var/log/nginx
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+  # ==========================================
+  # PHP-FPM (Application Server)
+  # ==========================================
+  php-fpm:
+    restart: always
+    volumes:
+      # No application code volumes - code is in image
+      - php_logs:/var/log/php
+      - php_fpm_logs:/var/log/php-fpm
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+
+  # ==========================================
+  # POSTGRESQL (Global DB)
+  # ==========================================
+  postgres:
+    restart: always
+    ports: []
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 2G
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:rw
+
+  # ==========================================
+  # MYSQL (Game Worlds DB)
+  # ==========================================
+  mysql:
+    restart: always
+    ports: []
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 2G
+    volumes:
+      - mysql_data:/var/lib/mysql:rw
+
+  # ==========================================
+  # REDIS (Caching & Sessions)
+  # ==========================================
+  redis:
+    restart: always
+    ports: []
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+  # ==========================================
+  # OLLAMA (LLM Backend)
+  # ==========================================
+  ollama:
+    restart: always
+    ports: []
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+      - OLLAMA_NUM_GPU=1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']  # RTX 3090 Ti
+              capabilities: [gpu]
+        limits:
+          cpus: '8'
+          memory: 16G
+    healthcheck:
+      test: ["CMD", "bash", "/var/www/html/scripts/verify-gpu.sh"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ==========================================
+  # VLLM (LLM Backend)
+  # ==========================================
+  vllm:
+    restart: always
+    ports: []
+    environment:
+      - CUDA_VISIBLE_DEVICES=1
+      - NVIDIA_VISIBLE_DEVICES=all
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['1']  # Tesla P40
+              capabilities: [gpu]
+        limits:
+          cpus: '8'
+          memory: 16G
+    healthcheck:
+      test: ["CMD", "bash", "/var/www/html/scripts/verify-gpu.sh"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+# ==========================================
+# VOLUMES (Shared volumes for production)
+# ==========================================
+volumes:

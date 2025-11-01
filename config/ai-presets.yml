@@ -1,0 +1,124 @@
+# AI-NPC Difficulty Presets
+# Defines behavior, intelligence, and performance characteristics
+
+version: 1.0
+
+presets:
+  easy:
+    name: "Easy (Beginner Bot)"
+    intelligence_level: 20
+    skill_level: "beginner"
+    personality_weights:
+      aggressive: 15
+      economic: 80
+      risk_tolerance: 10
+      diplomacy: 20
+    decision_frequency_seconds: 600  # 10 minutes
+    llm_ratio: 0.02  # 2% LLM, 98% rules
+    guardrails:
+      max_raids_per_hour: 30
+      max_attacks_per_day: 10
+      max_messages_per_hour: 5
+      max_api_calls_per_hour: 500
+    description: "Slow, predictable, makes mistakes"
+    
+  medium:
+    name: "Medium (Intermediate Player)"
+    intelligence_level: 50
+    skill_level: "intermediate"
+    personality_weights:
+      aggressive: 40
+      economic: 60
+      risk_tolerance: 40
+      diplomacy: 50
+    decision_frequency_seconds: 300  # 5 minutes
+    llm_ratio: 0.05  # 5% LLM, 95% rules (default)
+    guardrails:
+      max_raids_per_hour: 100
+      max_attacks_per_day: 50
+      max_messages_per_hour: 20
+      max_api_calls_per_hour: 2000
+    description: "Balanced play, decent strategy"
+    
+  hard:
+    name: "Hard (Advanced Player)"
+    intelligence_level: 75
+    skill_level: "advanced"
+    personality_weights:
+      aggressive: 70
+      economic: 40
+      risk_tolerance: 65
+      diplomacy: 70
+    decision_frequency_seconds: 120  # 2 minutes
+    llm_ratio: 0.10  # 10% LLM, 90% rules
+    guardrails:
+      max_raids_per_hour: 200
+      max_attacks_per_day: 150
+      max_messages_per_hour: 40
+      max_api_calls_per_hour: 5000
+    description: "Strong strategy, aggressive expansion"
+    
+  expert:
+    name: "Expert (Elite Bot)"
+    intelligence_level: 95
+    skill_level: "expert"
+    personality_weights:
+      aggressive: 85
+      economic: 30
+      risk_tolerance: 80
+      diplomacy: 85
+    decision_frequency_seconds: 60  # 1 minute
+    llm_ratio: 0.15  # 15% LLM, 85% rules
+    guardrails:
+      max_raids_per_hour: 300
+      max_attacks_per_day: 300
+      max_messages_per_hour: 60
+      max_api_calls_per_hour: 10000
+    description: "Near-optimal play, unpredictable, dangerous"
+
+# Personality Templates
+personalities:
+  aggressive:
+    name: "Aggressive Warmonger"
+    traits:
+      military_focus: 90
+      economic_focus: 30
+      expansion_rate: 80
+      raid_frequency: "constant"
+    primary_strategy: "offensive"
+    
+  economic:
+    name: "Economic Powerhouse"
+    traits:
+      military_focus: 20
+      economic_focus: 95
+      expansion_rate: 40
+      raid_frequency: "occasional"
+    primary_strategy: "economic"
+    
+  balanced:
+    name: "Balanced Player"
+    traits:
+      military_focus: 50
+      economic_focus: 60
+      expansion_rate: 50
+      raid_frequency: "frequent"
+    primary_strategy: "mixed"
+    
+  diplomat:
+    name: "Alliance Leader"
+    traits:
+      military_focus: 40
+      economic_focus: 50
+      expansion_rate: 30
+      raid_frequency: "rare"
+    primary_strategy: "diplomatic"
+    
+  assassin:
+    name: "Solo Hunter"
+    traits:
+      military_focus: 80
+      economic_focus: 40
+      expansion_rate: 60
+      raid_frequency: "targeted"
+    primary_strategy: "stealth"

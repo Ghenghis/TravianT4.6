@@ -1,0 +1,7 @@
+# Development environment configuration
+# Load with: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+services:
+  nginx:
+    ports:
+      - "5000:8080"

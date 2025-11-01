@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # Automation Worker
+  # ==========================================
+  automation-worker:
+    build:
+      context: .
+      dockerfile: docker/workers/Dockerfile
+    container_name: travian_automation_worker
+    command: ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/automation-worker.conf"]
+    volumes:
+      - ./:/var/www/html
+      - worker_logs:/var/log/workers
+    env_file:
+      - .env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - travian_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "php", "/var/www/html/scripts/healthcheck/worker-healthcheck.php", "automation", "700"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ==========================================
+  # AI Decision Worker
+  # ==========================================
+  ai-decision-worker:
+    build:
+      context: .
+      dockerfile: docker/workers/Dockerfile
+    container_name: travian_ai_decision_worker
+    command: ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/ai-decision-worker.conf"]
+    volumes:
+      - ./:/var/www/html
+      - worker_logs:/var/log/workers
+    env_file:
+      - .env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - travian_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "php", "/var/www/html/scripts/healthcheck/worker-healthcheck.php", "ai_decision", "700"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ==========================================
+  # Spawn Scheduler Worker
+  # ==========================================
+  spawn-scheduler-worker:
+    build:
+      context: .
+      dockerfile: docker/workers/Dockerfile
+    container_name: travian_spawn_scheduler_worker
+    command: ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/spawn-scheduler-worker.conf"]
+    volumes:
+      - ./:/var/www/html
+      - worker_logs:/var/log/workers
+    env_file:
+      - .env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - travian_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "php", "/var/www/html/scripts/healthcheck/worker-healthcheck.php", "spawn_scheduler", "2000"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+# ==========================================
+# Networks (shared with main stack)
+# ==========================================
+networks:
+  travian_network:
+    external: true
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes:
+  worker_logs:

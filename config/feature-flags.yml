@@ -1,0 +1,56 @@
+# Feature Flags Configuration
+# Default states for server-wide features
+
+version: 1.0
+
+# Server-Wide Features (Automation)
+server:
+  farming:
+    enabled: true
+    description: "Farmlist automation (auto-raiding)"
+    
+  building:
+    enabled: true
+    description: "Building automation (auto-build queues)"
+    
+  training:
+    enabled: true
+    description: "Training automation (auto-train troops)"
+    
+  defense:
+    enabled: true
+    description: "Defense automation (auto-reinforce)"
+    
+  logistics:
+    enabled: true
+    description: "Resource management (auto-balance, transport)"
+    
+  market:
+    enabled: false  # Disabled by default (advanced feature)
+    description: "Market automation (auto-trading)"
+    
+  away_mode:
+    enabled: true
+    description: "Away-mode (full automation when AFK)"
+
+# AI Features (Core Gameplay)
+ai:
+  ai_npcs:
+    enabled: true
+    locked: true  # Cannot be disabled - core feature
+    description: "AI-NPC players (teammates, foes, neutrals)"
+    
+  ai_workers:
+    enabled: true
+    description: "AI workers for human players"
+    
+  ai_llm:
+    enabled: true
+    description: "LLM integration for strategic decisions"
+    fallback_to_rules: true  # Auto-fallback when LLM unavailable
+
+# Player Defaults (New Accounts)
+player_defaults:
+  automation_enabled: false  # Players opt-in to automation
+  automation_intensity: "medium"  # low, medium, high
+  away_mode_enabled: false

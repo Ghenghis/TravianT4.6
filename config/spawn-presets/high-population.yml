@@ -1,0 +1,43 @@
+# High Population Preset - Large World (250 NPCs)
+preset_key: high
+name: High Population (Large World)
+description: Maximum challenge with 250 AI-NPCs, intense competition
+
+total_npcs: 250
+
+spawn_timing:
+  instant: 100
+  progressive:
+    day_1: 50
+    day_3: 50
+    day_7: 30
+    day_14: 20
+
+tribe_distribution:
+  romans: 33
+  gauls: 33
+  teutons: 34
+
+difficulty_distribution:
+  easy: 25
+  medium: 45
+  hard: 20
+  expert: 10
+
+personality_distribution:
+  aggressive: 25
+  economic: 25
+  balanced: 30
+  diplomat: 10
+  assassin: 10
+
+spawn_zones:
+  center_exclusion_radius: 50
+  max_spawn_radius: 400
+  quadrant_balance: true
+
+placement:
+  algorithm: quadrant_balanced
+  clustering: true           # Enable kingdom clustering
+  cluster_size: 15           # ~15 NPCs per cluster
+  clusters: 17               # ~17 kingdoms

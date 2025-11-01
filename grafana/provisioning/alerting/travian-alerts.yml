@@ -1,0 +1,68 @@
+apiVersion: 1
+
+groups:
+  - name: security_alerts
+    interval: 1m
+    rules:
+      - uid: auth_failures
+        title: High Authentication Failure Rate
+        condition: A
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'count_over_time({job="travian_app",level="warning",event_type="authentication"}[5m]) > 20'
+        noDataState: NoData
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          description: 'More than 20 authentication failures in 5 minutes'
+          summary: 'Potential brute force attack'
+        labels:
+          severity: P1
+      
+      - uid: csrf_failures
+        title: CSRF Validation Failures
+        condition: A
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'count_over_time({job="travian_app"} |= "CSRF_VALIDATION_FAILED"[5m]) > 10'
+        noDataState: NoData
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          description: 'More than 10 CSRF validation failures in 5 minutes'
+          summary: 'Potential CSRF attack'
+        labels:
+          severity: P2
+      
+      - uid: waf_blocks
+        title: WAF Blocking Spike
+        condition: A
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: 'rate(nginx_http_requests_total{status="403"}[5m]) > 10'
+        noDataState: NoData
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          description: 'WAF blocking more than 10 requests/sec'
+          summary: 'Potential attack or misconfiguration'
+        labels:
+          severity: P2

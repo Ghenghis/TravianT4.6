@@ -1,0 +1,49 @@
+# Spawn Placement Algorithms Configuration
+version: 1.0
+
+algorithms:
+  quadrant_balanced:
+    name: Quadrant Balanced Distribution
+    description: Evenly distributes NPCs across 4 map quadrants (NW, NE, SW, SE)
+    parameters:
+      ensure_equal_distribution: true
+      quadrant_tolerance: 5       # Allow ±5% variance per quadrant
+      min_distance_between_npcs: 5  # Minimum 5 tiles apart
+    use_cases:
+      - Balanced PvP gameplay
+      - Fair starting positions
+      - Standard world setup
+    
+  random_scatter:
+    name: Random Scatter Distribution
+    description: Randomly places NPCs across the entire map
+    parameters:
+      avoid_center: true
+      center_exclusion_radius: 50
+      randomness_factor: 1.0      # Full randomness
+      min_distance_between_npcs: 3
+    use_cases:
+      - Chaotic gameplay
+      - Unpredictable spawns
+      - Artifact-like appearance
+    
+  kingdom_clustering:
+    name: Kingdom Clustering Distribution
+    description: Groups NPCs into clusters simulating kingdoms/alliances
+    parameters:
+      cluster_size: 15            # NPCs per cluster
+      cluster_radius: 25          # Tiles around cluster center
+      min_cluster_distance: 100   # Distance between clusters
+      cluster_variance: 0.3       # 30% size variance
+      quadrant_balance: true      # Distribute clusters across quadrants
+    use_cases:
+      - Alliance-focused gameplay
+      - Territorial warfare
+      - Realistic kingdom formation
+
+# Default Settings
+defaults:
+  algorithm: quadrant_balanced
+  collision_detection: true
+  max_spawn_attempts: 50        # Retry up to 50 times if collision
+  fallback_algorithm: random_scatter

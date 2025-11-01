@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # Maintenance Container (Backups)
+  # ==========================================
+  maintenance:
+    build:
+      context: .
+      dockerfile: docker/maintenance/Dockerfile
+    container_name: travian_maintenance
+    environment:
+      # PostgreSQL
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: ${POSTGRES_USER:-travian}
+      PGDATABASE: ${POSTGRES_DB:-travian_global}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      
+      # MySQL
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      
+      # Backup directory
+      BACKUP_DIR: /backups
+      
+      # Timezone
+      TZ: ${TZ:-UTC}
+    volumes:
+      - backup_data:/backups
+      - ./scripts:/scripts:ro
+    networks:
+      - data_services
+    restart: unless-stopped
+    profiles:
+      - maintenance
+    mem_limit: 512M
+    cpus: 0.5
+    mem_reservation: 256M
+
+volumes:
+  backup_data:
+    driver: local
+
+networks:
+  data_services:
+    external: true
+    name: travian_data_services

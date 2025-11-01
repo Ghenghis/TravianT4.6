@@ -1,0 +1,186 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # Prometheus (Metrics Collection)
+  # ==========================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: travian_prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - edge_public
+      - app_core
+      - data_services
+    restart: unless-stopped
+    profiles:
+      - monitoring
+    mem_limit: 1024M
+    cpus: 1.0
+    mem_reservation: 512M
+
+  # ==========================================
+  # Grafana (Visualization)
+  # ==========================================
+  grafana:
+    image: grafana/grafana:latest
+    container_name: travian_grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_INSTALL_PLUGINS=redis-datasource
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - edge_public
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    profiles:
+      - monitoring
+    mem_limit: 512M
+    cpus: 0.5
+    mem_reservation: 256M
+
+  # ==========================================
+  # Node Exporter (Host Metrics)
+  # ==========================================
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: travian_node_exporter
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    ports:
+      - "9100:9100"
+    networks:
+      - app_core
+    restart: unless-stopped
+    profiles:
+      - monitoring
+    mem_limit: 256M
+    cpus: 0.25
+    mem_reservation: 128M
+
+  # ==========================================
+  # PostgreSQL Exporter
+  # ==========================================
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: travian_postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "${DATABASE_URL}"
+    networks:
+      - data_services
+    restart: unless-stopped
+    profiles:
+      - monitoring
+    mem_limit: 256M
+    cpus: 0.25
+    mem_reservation: 128M
+
+  # ==========================================
+  # MySQL Exporter
+  # ==========================================
+  mysql-exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: travian_mysql_exporter
+    environment:
+      DATA_SOURCE_NAME: "root:${MYSQL_ROOT_PASSWORD}@(mysql:3306)/"
+    networks:
+      - data_services
+    restart: unless-stopped
+    profiles:
+      - monitoring
+    mem_limit: 256M
+    cpus: 0.25
+    mem_reservation: 128M
+
+  # ==========================================
+  # Redis Exporter
+  # ==========================================
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: travian_redis_exporter
+    environment:
+      REDIS_ADDR: "redis:6379"
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+    networks:
+      - data_services
+    restart: unless-stopped
+    profiles:
+      - monitoring
+    mem_limit: 256M
+    cpus: 0.25
+    mem_reservation: 128M
+
+  # ==========================================
+  # PHP-FPM Exporter
+  # ==========================================
+  php-fpm-exporter:
+    image: hipages/php-fpm_exporter:latest
+    container_name: travian_php_fpm_exporter
+    environment:
+      PHP_FPM_SCRAPE_URI: "tcp://php-fpm:9000/status"
+    networks:
+      - app_core
+    restart: unless-stopped
+    profiles:
+      - monitoring
+    mem_limit: 256M
+    cpus: 0.25
+    mem_reservation: 128M
+
+  # ==========================================
+  # Nginx Exporter
+  # ==========================================
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: travian_nginx_exporter
+    command:
+      - '-nginx.scrape-uri=http://nginx:80/nginx_status'
+    networks:
+      - app_core
+    restart: unless-stopped
+    profiles:
+      - monitoring
+    mem_limit: 256M
+    cpus: 0.25
+    mem_reservation: 128M
+
+volumes:
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  edge_public:
+    external: true
+    name: travian_edge_public
+  app_core:
+    external: true
+    name: travian_app_core
+  data_services:
+    external: true
+    name: travian_data_services

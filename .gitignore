@@ -1,0 +1,286 @@
+# ==========================================
+# TRAVIAN T4.6 - GIT IGNORE RULES
+# Security-Hardened Configuration
+# ==========================================
+
+# ==========================================
+# ENVIRONMENT FILES (CRITICAL - SECRETS)
+# ==========================================
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
+.env.*.local
+.env.backup
+.env.old
+*.env
+
+# Environment file backups
+.env.*~
+.env.*.bak
+.env.*.backup
+.env.*.old
+.env.*.tmp
+
+# ==========================================
+# SECRET FILES
+# ==========================================
+secrets/
+*.secret
+*.secrets
+
+# Encryption keys
+*.key
+*.pem
+*.crt
+*.cer
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.truststore
+
+# SSH keys
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.ppk
+
+# GPG keys
+*.gpg
+*.asc
+secring.*
+
+# ==========================================
+# DATABASE CREDENTIALS & BACKUPS
+# ==========================================
+# Database dumps
+*.sql
+*.sql.gz
+*.sql.bz2
+*.sql.zip
+*.dump
+*.backup
+
+# Database credentials
+database.yml
+database.ini
+db-config.json
+db-credentials.json
+
+# ==========================================
+# DOCKER SECRETS
+# ==========================================
+docker/secrets/
+# docker-compose.dev.yml - COMMITTED for dev convenience (explicit loading only)
+docker-compose.override.yml
+docker-compose.local.yml
+docker-compose.*.local.yml
+
+# ==========================================
+# API KEYS & TOKENS
+# ==========================================
+# API configuration files
+*-api-key.txt
+*-api-secret.txt
+api-keys.json
+api-secrets.json
+tokens.json
+credentials.json
+
+# OAuth tokens
+*.oauth
+oauth-tokens.json
+
+# JWT secrets
+jwt-secret.txt
+jwt.key
+
+# ==========================================
+# PASSWORD FILES
+# ==========================================
+passwords.txt
+.htpasswd
+.credentials
+.password
+*.password
+
+# ==========================================
+# CLOUD PROVIDER CREDENTIALS
+# ==========================================
+# AWS
+.aws/
+aws-credentials
+credentials
+
+# Google Cloud
+gcp-credentials.json
+service-account.json
+*.json.key
+
+# Azure
+azure-credentials.json
+
+# ==========================================
+# LOG FILES (MAY CONTAIN SENSITIVE DATA)
+# ==========================================
+logs/
+*.log
+*.log.*
+*.log.gz
+log-*.txt
+
+# Application logs
+app.log
+error.log
+debug.log
+access.log
+query.log
+
+# PHP logs
+php_errors.log
+php-fpm.log
+
+# Database logs
+mysql-*.log
+postgresql-*.log
+
+# ==========================================
+# TEMPORARY FILES
+# ==========================================
+tmp/
+temp/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# IDE & EDITOR FILES
+# ==========================================
+# VSCode
+.vscode/
+*.code-workspace
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+.*.sw?
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ==========================================
+# PACKAGE MANAGER DIRECTORIES
+# ==========================================
+node_modules/
+vendor/
+bower_components/
+
+# ==========================================
+# BUILD & CACHE DIRECTORIES
+# ==========================================
+dist/
+build/
+.cache/
+*.cache
+
+# ==========================================
+# SESSION FILES
+# ==========================================
+sessions/
+*.session
+
+# ==========================================
+# BACKUP FILES
+# ==========================================
+*.bak
+*.backup
+*.old
+*~
+
+# ==========================================
+# OS FILES
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# CONFIGURATION OVERRIDES
+# ==========================================
+config.local.php
+config.override.php
+settings.local.php
+local-config.php
+
+# ==========================================
+# MONITORING & METRICS DATA
+# ==========================================
+prometheus/data/
+grafana/data/
+
+# ==========================================
+# DOCKER VOLUMES & DATA
+# ==========================================
+data/
+volumes/
+.docker/
+
+# ==========================================
+# TESTING
+# ==========================================
+.phpunit.result.cache
+coverage/
+.coverage
+
+# ==========================================
+# IMPORTANT: KEEP THESE FILES
+# ==========================================
+# Always track example/template files
+!.env.production.example
+!.env.example
+!docker-compose.yml
+!docker-compose.workers.yml
+!config.example.php
+
+# ==========================================
+# PROJECT-SPECIFIC EXCLUSIONS
+# ==========================================
+# Travian-specific
+main_script/include/config/settings.php
+Manager/config.php
+
+# AI model cache
+ollama_models/
+vllm_models/
+model_cache/
+huggingface_cache/
+
+# Worker state files (if they contain sensitive data)
+worker_state/
+
+# TLS/SSL Certificates
+certs/

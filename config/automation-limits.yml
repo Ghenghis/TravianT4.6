@@ -1,0 +1,65 @@
+# Automation Rate Limits & Guardrails
+# Prevents abuse and maintains server performance
+
+version: 1.0
+
+# Global Server Limits
+global:
+  max_llm_calls_per_hour: 10000  # Total across all NPCs
+  max_concurrent_ai_decisions: 50  # Batch processing limit
+  decision_timeout_ms: 5000  # Kill stuck decisions
+  
+# Per-Player Limits (Humans)
+player:
+  beginner:
+    max_raids_per_hour: 50
+    max_trades_per_hour: 20
+    max_transports_per_hour: 30
+    max_api_calls_per_minute: 30
+    
+  intermediate:
+    max_raids_per_hour: 100
+    max_trades_per_hour: 50
+    max_transports_per_hour: 60
+    max_api_calls_per_minute: 60
+    
+  advanced:
+    max_raids_per_hour: 200
+    max_trades_per_hour: 100
+    max_transports_per_hour: 120
+    max_api_calls_per_minute: 120
+    
+  expert:
+    max_raids_per_hour: 300
+    max_trades_per_hour: 200
+    max_transports_per_hour: 200
+    max_api_calls_per_minute: 200
+
+# Performance Thresholds
+performance:
+  warning_threshold_ms: 200  # Warn if response > 200ms
+  error_threshold_ms: 1000  # Error if response > 1s
+  max_queue_size: 1000  # Max pending automation tasks
+  
+# Safety Features
+safety:
+  auto_pause_on_errors: true  # Pause automation after 10 consecutive errors
+  error_threshold: 10
+  cooldown_period_seconds: 300  # 5 min cooldown after auto-pause
+  
+  # Spam Prevention
+  max_same_action_per_minute: 20
+  max_failed_actions_per_hour: 50
+  
+  # Resource Protection
+  min_resource_buffer_percent: 10  # Keep 10% resources as buffer
+  prevent_zero_resources: true
+
+# LLM Integration Limits
+llm:
+  max_context_length: 2048  # tokens
+  timeout_ms: 180  # 180ms LLM timeout
+  max_retries: 1
+  fallback_to_rules: true
+  cache_responses: true
+  cache_ttl_seconds: 300  # 5 min cache
